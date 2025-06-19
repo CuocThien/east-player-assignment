@@ -1,73 +1,106 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+# Project Documentation
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project provides an API for uploading images and videos, extracting video frames, and storing files using a MinIO backend. Below are step-by-step instructions for setting up the project and using the API endpoints.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## Table of Contents
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- [Setup Instructions](#setup-instructions)
+- [Uploading an Image](#uploading-an-image)
+- [Uploading a Video](#uploading-a-video)
+- [Postman Collection](#postman-collection)
+- [Notes](#notes)
 
-## Installation
+---
 
-```bash
-$ npm install
-```
+## Setup Instructions
 
-## Running the app
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/CuocThien/east-player-assignment.git
+   cd east-player-assignment
+   ```
 
-```bash
-# development
-$ npm run start
+2. **Install Dependencies**
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
-# watch mode
-$ npm run start:dev
+3. **Create a .env file**
+   ```bash
+   cp .env.example .env
+   ```
 
-# production mode
-$ npm run start:prod
-```
+3. **Start MinIO and Backend using Docker Compose**
+   ```bash
+   docker-compose up
+   ```
+   - MinIO will be available at [http://localhost:9001](http://localhost:9001) (default credentials: `minioadmin` / `minioadmin`).
+   - Backend API will be available at [http://localhost:3000](http://localhost:3000).
 
-## Test
+4. **(Optional) Access MinIO Console**
+   - Open [http://localhost:9001](http://localhost:9001) in your browser.
+   - Login with the credentials above.
 
-```bash
-# unit tests
-$ npm run test
+---
 
-# e2e tests
-$ npm run test:e2e
+## Uploading an Image
 
-# test coverage
-$ npm run test:cov
-```
+1. **Open Postman.**
+2. **Import the Public Postman Collection:**
+   - [Postman Workspace Link](https://www.postman.com/planetary-satellite-308563/workspace/east-player)
+3. **Select the `Upload brand image` Request** (or create a new POST request to `/api/upload/brand-image`).
+4. **Set the Request:**
+   - Method: `POST`
+   - URL: `http://localhost:3000/api/upload/brand-image`
+   - Body: Select `form-data`
+     - Key: `file` (Type: File)
+     - Value: *Choose your image file*
+5. **Send the Request.**
+6. **Check the Response:**
+   - You should receive a JSON response with the uploaded image URL.
 
-## Support
+---
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Uploading a Video
 
-## Stay in touch
+1. **Open Postman.**
+2. **Import the Public Postman Collection:**
+   - [Postman Workspace Link](https://www.postman.com/planetary-satellite-308563/workspace/east-player)
+3. **Select the `Upload Video` Request** (or create a new POST request to `/api/upload/video`).
+4. **Set the Request:**
+   - Method: `POST`
+   - URL: `http://localhost:3000/api/upload/video`
+   - Body: Select `form-data`
+     - Key: `file` (Type: File)
+     - Value: *Choose your video file (e.g., .mp4)*
+     - Key: `brandImageFileName` (Type: String)
+     - Value: *Use the brand image file name you received from the previous request*
+5. **Send the Request.**
+6. **Check the Response:**
+   - You should receive a JSON response with URLs for the uploaded video and extracted frames.
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+---
 
-## License
+## Postman Collection
 
-Nest is [MIT licensed](LICENSE).
+- All API endpoints and example requests are available in the public Postman workspace:
+  - [https://www.postman.com/planetary-satellite-308563/workspace/east-player](https://www.postman.com/planetary-satellite-308563/workspace/east-player)
+
+---
+
+## Notes
+
+- Make sure Docker is running before starting the project.
+- The backend service depends on MinIO for file storage.
+- If you encounter issues with file uploads, check the backend logs and ensure MinIO is healthy.
+- For advanced usage (e.g., programmatic access), refer to the API definitions in the Postman collection.
+
+---
+
+> **Note:**  
+> Due to time constraints, the current implementation is not optimized for large files and may not provide the best performance when handling very large video uploads or processing. I plan to improve and optimize this in future updates.
+

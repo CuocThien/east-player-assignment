@@ -5,6 +5,7 @@ import { Readable } from 'stream';
 import { UploadFileDto } from './dto/upload-payload.dto';
 import { map, chunk } from 'lodash';
 import * as fs from 'fs';
+import { createReadStream } from 'fs';
 
 @Injectable()
 export class StorageService {
@@ -35,7 +36,7 @@ export class StorageService {
     let fileStream: Readable;
     
     if (file.path) {
-      fileStream = fs.createReadStream(file.path);
+      fileStream = createReadStream(file.path);
     } else if (file.buffer) {
       fileStream = Readable.from(file.buffer);
     } else {
@@ -51,6 +52,15 @@ export class StorageService {
         'Content-Type': file.mimetype,
       },
     );
+
+    if (file.path) {
+      try {
+        await fs.promises.unlink(file.path);
+      } catch (error) {
+        console.error('Error cleaning up temporary file:', error);
+      }
+    }
+
     return fileName;
   }
 
@@ -67,7 +77,7 @@ export class StorageService {
       }
       uploadedPayloads.push(uploadedPayload);
     }
-    const chunkedPayloads = chunk(uploadedPayloads, 100);
+    const chunkedPayloads = chunk(uploadedPayloads, 500);
     for (let i = 0; i < chunkedPayloads.length; i++) {
       const chunk = chunkedPayloads[i];
       await Promise.all(chunk.map(async (p) => this.minioClient.putObject(this.bucket, p.fileName, Readable.from(p.buffer), p.size, { 'Content-Type': p.mimetype })));
@@ -91,6 +101,16 @@ export class StorageService {
       },
     );
     return fileName;
+  }
+
+  async getFileBuffer(fileName: string): Promise<Buffer[]> {
+    const stream = await this.minioClient.getObject(this.bucket, fileName);
+    
+    const chunks: Buffer[] = [];
+    stream.on('data', (chunk) => {
+      chunks.push(chunk);
+    });
+    return chunks;
   }
 
   async getFileUrl(fileName: string): Promise<string> {

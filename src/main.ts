@@ -10,7 +10,6 @@ async function bootstrap() {
   app.use(json({ limit: '15gb' }));
   app.use(urlencoded({ limit: '15gb', extended: true }));
 
-
   // Enable CORS
   app.enableCors();
 
@@ -20,6 +19,6 @@ async function bootstrap() {
   // Set global prefix
   app.setGlobalPrefix('api');
 
-  await app.listen(process.env.PORT || 3000);
+  await app.listen(process.env.PORT || 3000, '0.0.0.0');
 }
 bootstrap();
